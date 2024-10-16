@@ -1,0 +1,147 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#map {
+    height: 100vh; /* Fullscreen height */
+    width: 100vw; /* Fullscreen width */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Ensures the map stays behind other elements */
+}
+
+/* Container for the buttons */
+#buttonContainer {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically if needed */
+    gap: 10px; /* Add space between the buttons */
+    padding: 20px;
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally on the page */
+    z-index: 10000; /* Ensure buttons are on top of other content */
+}
+
+/* Styling for the buttons */
+button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#resetButton {
+    background-color: #28a745;
+}
+
+#resetButton:hover {
+    background-color: #218838;
+}
+
+/* Modal styled as a left sidebar */
+#assetModal {
+    display: none; /* Hidden initially */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20vw; /* 25% width of the viewport */
+    height: 96vh; /* Full height of the page */
+    background-color: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15); /* Shadow to give depth */
+    overflow-y: auto;
+    z-index: 9999; /* Ensure modal stays on top */
+    padding: 20px;
+    border-right: 2px solid #ccc; /* Add a border on the right */
+}
+
+/* Modal close button - sticky position */
+#closeModal {
+    position: sticky; /* Use sticky positioning */
+    top: 0; /* Stick to the top of the modal */
+    right: 20px; /* Add some space to the right */
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    background-color: white; /* Background color to ensure visibility */
+    padding: 10px;
+    border: none;
+    z-index: 10000; /* Ensure it's on top */
+}
+
+#assetModal h2 {
+    text-align: center;
+    font-size: 22px;
+}
+
+#assets {
+    margin-top: 20px;
+}
+
+.asset-item {
+    padding: 15px;
+    background-color: #fafafa;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.asset-item:hover {
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.asset-item strong {
+    display: block;
+    font-size: 18px;
+    color: #333;
+}
+
+/* Add responsiveness */
+@media only screen and (max-width: 768px) {
+    #assetModal {
+        width: 80vw;
+    }
+}
+
+/* Details Panel (right side) */
+.details-panel {
+    position: fixed;
+    top: 0;
+    right: -40vw; /* Initially hidden off-screen */
+    width: 25vw;
+    height: 96vh;
+    background-color: white;
+    box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+    z-index: 10001; /* Ensure it's above the map but below the modal */
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Close button for the details panel */
+#closeDetails {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the details content */
+#detailsContent {
+    margin-top: 40px;
+}

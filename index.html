@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Map with Modal</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="./assets/css/main.css">
+</head>
+<body>
+<!-- Button Container -->
+<div id="buttonContainer">
+    <!-- Toggle Button for Asset List -->
+    <button id="toggleButton">Show Asset List</button>
+    <!-- Reset Button for Resetting Map View -->
+    <button id="resetButton">Reset View</button>
+</div>
+
+<!-- Fullscreen Map -->
+<div id="map"></div>
+
+<!-- Asset Modal -->
+<div id="assetModal">
+    <span id="closeModal">&times;</span>
+    <h2>Assets</h2>
+    <div id="assets"></div>
+</div>
+<!-- Right-Side Details Panel -->
+<div id="detailsPanel" class="details-panel">
+    <span id="closeDetails">&times;</span>
+    <h2>Asset Details</h2>
+    <div id="detailsContent"></div>
+</div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="./js/getAssetData.js"></script> <!-- Link your script file here -->
+</body>
+</html>
