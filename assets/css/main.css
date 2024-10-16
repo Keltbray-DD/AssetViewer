@@ -137,34 +137,46 @@ button:hover {
   }
 }
 
-/* Details Panel (right side) */
+/* Details Panel (right side) - hidden by default */
 .details-panel {
-  position: fixed;
-  top: 0;
-  right: -40vw; /* Initially hidden off-screen */
-  width: 25vw;
-  height: 100vh;
-  background-color: white;
-  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
-  transition: right 0.3s ease;
-  z-index: 10001; /* Ensure it's above the map but below the modal */
-  padding: 0 20px;
-  overflow-y: auto;
+    position: fixed;
+    top: 0;
+    right: -60vw; /* Hide off-screen initially */
+    width: 30vw; /* Default width */
+    height: 100vh;
+    background-color: white;
+    box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease; /* Smooth transition for sliding in/out */
+    z-index: 10001;
+    padding: 20px;
+    overflow-y: auto;
 }
 
 /* Close button for the details panel */
 #closeDetails {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  font-size: 24px;
-  cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Resize handle */
+#resizeHandle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background-color: #ccc;
+    cursor: ew-resize; /* East-west resize cursor */
 }
 
 /* Styling for the details content */
 #detailsContent {
-  margin-top: 40px;
+    margin-top: 40px;
 }
+
 
 /* Style for the search bar */
 #searchBar {
@@ -180,3 +192,22 @@ button:hover {
   background-color: white; /* Ensure it has a background color */
   z-index: 1000; /* Ensure it's above other content when scrolling */
 }
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }

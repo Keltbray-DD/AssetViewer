@@ -9,6 +9,7 @@ let excel_MIDP_Filename = "ACC_Training_Project_Asset_Data";
 
 start();
 
+
 // Store the initial view settings for the map
 const initialLat = 54.5;
 const initialLng = -3.5;
@@ -100,18 +101,76 @@ function greyOutAssetItem(assetItem, asset) {
   assetItem.style.backgroundColor = "#f0f0f0"; // Light grey background
   assetItem.style.cursor = "not-allowed"; // Change cursor to indicate non-clickable
 }
+document.addEventListener('DOMContentLoaded',async function(){
+    let detailsPanel = document.getElementById('detailsPanel');
+    let resizeHandle = document.getElementById('resizeHandle');
+    let closeDetails = document.getElementById('closeDetails');
+    let isResizing = false;
+
+    // Close the details panel
+    closeDetails.addEventListener('click', function() {
+        detailsPanel.style.right = '-60vw'; // Hide the panel by sliding it out
+    });
+
+    // JavaScript for resizable panel
+    resizeHandle.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        document.body.style.cursor = 'ew-resize'; // Change cursor while resizing
+    });
+
+    document.addEventListener('mousemove', function(e) {
+        if (!isResizing) return;
+
+        // Calculate new width based on mouse movement
+        let newWidth = window.innerWidth - e.clientX;
+        if (newWidth > 200 && newWidth < window.innerWidth * 0.5) { // Set min and max width
+            detailsPanel.style.width = newWidth + 'px';
+        }
+    });
+
+    document.addEventListener('mouseup', function() {
+        isResizing = false;
+        document.body.style.cursor = ''; // Reset cursor after resizing
+    });
+
+    // Sample function that gets triggered when an asset is clicked
+    function onAssetClick(asset) {
+        // Call showDetailsPanel with the asset's data
+        showDetailsPanel(asset);
+    }
+})
 
 // Show the details panel with asset information
 function showDetailsPanel(asset) {
   // Populate the details panel with information from the selected asset
   const detailsContent = document.getElementById("detailsContent");
   detailsContent.innerHTML = `
-        <strong>Site Name:</strong> ${asset["Site Name"]}<br>
-        <strong>Postcode:</strong> ${asset["Postcode"]}<br>
-        <strong>Category ID:</strong> ${asset["categoryId"]}<br>
-        <strong>Asset ID:</strong> ${asset["assetId"]}<br>
-        <!-- Add more asset details here as needed -->
-    `;
+    <strong>Site Name:</strong> ${asset["Site Name"]}<br>
+    <strong>Postcode:</strong> ${asset["Postcode"]}<br>
+    <strong>Category ID:</strong> ${asset["categoryId"]}<br>
+    <strong>Asset ID:</strong> ${asset["assetId"]}<br>
+    <strong>Frequency:</strong> ${asset["Frequency"]}<br>
+    <strong>Region:</strong> ${asset["Region"]}<br>
+    <strong>Route:</strong> ${asset["Route"]}<br>
+    <strong>ELR:</strong> ${asset["ELR"]}<br>
+    <strong>Mileage:</strong> ${asset["Mileage"]}<br>
+    <strong>Operator:</strong> ${asset["Operator"]}<br>
+    <strong>Area:</strong> ${asset["Area"]}<br>
+    <strong>Banding:</strong> ${asset["Banding"]}<br>
+    <strong>Percentage Complete:</strong> ${asset["Percentage Complete"]}<br>
+    <strong>NR Status:</strong> ${asset["NR Status"]}<br>
+    <strong>Examiner:</strong> ${asset["Examiner"]}<br>
+    <strong>Line Block:</strong> ${asset["Line Block"]}<br>
+    <strong>Site Tolerance Date (earliest):</strong> ${asset["Site Tolerance Date (earliest)"]}<br>
+    <strong>Required Exam Site Date:</strong> ${asset["Required Exam Site Date"]}<br>
+    <strong>Requested Site Tolerance Date (latest):</strong> ${asset["Requested Site Tolerance Date (latest)"]}<br>
+    <strong>Baseline Date:</strong> ${asset["Baseline Date"]}<br>
+    <strong>Works Started on-site Date:</strong> ${asset["Works Started on-site Date"]}<br>
+    <strong>Completion on-site Date:</strong> ${asset["Completion on-site Date"]}<br>
+    <strong>Date exam becomes over 28 Days:</strong> ${asset["Date exam becomes over 28 Days"]}<br>
+    <strong>Date Ready for STE2 Checks:</strong> ${asset["Date Ready for STE2 Checks"]}<br>
+    <strong>Planned Submission Date:</strong> ${asset["Planned Submission Date"]}<br>
+`;
 
   // Slide the details panel in from the right
   document.getElementById("detailsPanel").style.right = "0";
@@ -119,7 +178,7 @@ function showDetailsPanel(asset) {
 
 // Close the details panel
 document.getElementById("closeDetails").addEventListener("click", function () {
-  document.getElementById("detailsPanel").style.right = "-40vw"; // Hide the panel off-screen
+  document.getElementById("detailsPanel").style.right = "-60vw"; // Hide the panel off-screen
 });
 
 // Function to filter and search through the asset list
@@ -358,3 +417,5 @@ closeModal.addEventListener("click", () => {
   modal.style.display = "none";
   toggleButton.textContent = "Show Asset List";
 });
+
+
