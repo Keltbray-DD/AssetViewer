@@ -57,7 +57,7 @@ button:hover {
   position: fixed;
   top: 0;
   left: 0;
-  width: 25vw;
+  width: 20vw;
   height: 100vh;
   background-color: white;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
@@ -148,7 +148,7 @@ button:hover {
     box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
     transition: right 0.3s ease; /* Smooth transition for sliding in/out */
     z-index: 10001;
-    padding: 20px;
+    padding: 0 20px;
     overflow-y: auto;
 }
 

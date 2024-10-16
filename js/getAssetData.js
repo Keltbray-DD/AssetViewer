@@ -18,6 +18,40 @@ const initialZoom = 6;
 // Initialize the map and set its view to the initial latitude and longitude
 const map = L.map("map").setView([initialLat, initialLng], initialZoom); // Default view over the UK
 
+// Define different tile layers (Terrain, Satellite, Street, etc.)
+
+// OpenStreetMap standard tile layer (default)
+const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map); // Add it by default to the map
+
+// Google Satellite tile layer
+const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    maxZoom: 19,
+    attribution: '© Google'
+});
+
+// Terrain tile layer (from Stamen)
+const terrainLayer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+});
+const hybridLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    maxZoom: 19,
+    attribution: '© Google'
+});
+
+// Add a control to switch between layers
+const baseLayers = {
+    "Street Map": osmLayer,
+    "Satellite": satelliteLayer,
+    "Terrain": terrainLayer,
+    "Hybrid":hybridLayer
+};
+
+L.control.layers(baseLayers).addTo(map); // Add layer control to the map
+
 async function start() {
   // Call the function to plot all assets
   await createAssetList();
@@ -107,9 +141,12 @@ document.addEventListener('DOMContentLoaded',async function(){
     let closeDetails = document.getElementById('closeDetails');
     let isResizing = false;
 
+
+
     // Close the details panel
     closeDetails.addEventListener('click', function() {
         detailsPanel.style.right = '-60vw'; // Hide the panel by sliding it out
+        adjustLayerControlPosition(0); // Move the control back to default position
     });
 
     // JavaScript for resizable panel
@@ -126,6 +163,7 @@ document.addEventListener('DOMContentLoaded',async function(){
         if (newWidth > 200 && newWidth < window.innerWidth * 0.5) { // Set min and max width
             detailsPanel.style.width = newWidth + 'px';
         }
+        adjustLayerControlPosition(newWidth); // Adjust the layer control position
     });
 
     document.addEventListener('mouseup', function() {
@@ -139,7 +177,13 @@ document.addEventListener('DOMContentLoaded',async function(){
         showDetailsPanel(asset);
     }
 })
-
+// Function to adjust the position of the layer control
+function adjustLayerControlPosition(panelWidth) {
+    const controlContainer = document.querySelector('.leaflet-control-layers'); // Get the control container
+    if (controlContainer) {
+        controlContainer.style.right = panelWidth ? `${panelWidth +30}px` : '10px'; // Adjust based on panel width
+    }
+}
 // Show the details panel with asset information
 function showDetailsPanel(asset) {
   // Populate the details panel with information from the selected asset
@@ -171,7 +215,8 @@ function showDetailsPanel(asset) {
     <strong>Date Ready for STE2 Checks:</strong> ${asset["Date Ready for STE2 Checks"]}<br>
     <strong>Planned Submission Date:</strong> ${asset["Planned Submission Date"]}<br>
 `;
-
+const panelWidthPx = vwToPx(30); // Convert panel width from vw to pixels
+    adjustLayerControlPosition(panelWidthPx);
   // Slide the details panel in from the right
   document.getElementById("detailsPanel").style.right = "0";
 }
@@ -180,7 +225,9 @@ function showDetailsPanel(asset) {
 document.getElementById("closeDetails").addEventListener("click", function () {
   document.getElementById("detailsPanel").style.right = "-60vw"; // Hide the panel off-screen
 });
-
+function vwToPx(vw) {
+    return (vw / 100) * window.innerWidth;
+}
 // Function to filter and search through the asset list
 function searchAssets() {
   // Get the value from the search bar
