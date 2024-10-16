@@ -7,6 +7,160 @@ let assetList = [];
 let assetListUpdated = [];
 let excel_MIDP_Filename = "ACC_Training_Project_Asset_Data";
 
+const routesData = [
+    {
+        name: "East Coast Main Line (ECML)",
+        color: "blue",
+        coordinates: [
+            [51.5308, -0.1236],  // London King's Cross
+            [52.0616, -0.1971],  // Stevenage
+            [52.5806, -0.2425],  // Peterborough
+            [52.9067, -0.6425],  // Grantham
+            [53.0809, -0.8093],  // Newark North Gate
+            [53.5229, -1.1358],  // Doncaster
+            [53.9576, -1.0827],  // York
+            [54.5231, -1.5552],  // Darlington
+            [54.7763, -1.5768],  // Durham
+            [54.9783, -1.6174],  // Newcastle
+            [55.7710, -2.0067],  // Berwick-upon-Tweed
+            [55.9533, -3.1883]   // Edinburgh
+        ]
+    },
+    {
+        name: "West Coast Main Line (WCML)",
+        color: "green",
+        coordinates: [
+            [51.5281, -0.1337],  // London Euston
+            [52.0416, -0.7558],  // Milton Keynes
+            [52.3791, -1.2654],  // Rugby
+            [52.4080, -1.5106],  // Coventry
+            [52.4797, -1.9020],  // Birmingham
+            [52.5862, -2.1283],  // Wolverhampton
+            [52.8055, -2.1164],  // Stafford
+            [53.0989, -2.4415],  // Crewe
+            [53.3891, -2.6025],  // Warrington
+            [53.5455, -2.6324],  // Wigan
+            [53.7632, -2.7031],  // Preston
+            [54.0483, -2.8019],  // Lancaster
+            [54.8951, -2.9390],  // Carlisle
+            [55.8580, -4.2590]   // Glasgow Central
+        ]
+    },
+    {
+        name: "Great Western Main Line (GWML)",
+        color: "red",
+        coordinates: [
+            [51.5152, -0.1759],  // London Paddington
+            [51.4591, -0.9711],  // Reading
+            [51.6097, -1.2435],  // Didcot Parkway
+            [51.5640, -1.7776],  // Swindon
+            [51.4612, -2.1195],  // Chippenham
+            [51.3813, -2.3576],  // Bath Spa
+            [51.4505, -2.5833],  // Bristol Temple Meads
+            [51.5842, -2.9984],  // Newport
+            [51.4788, -3.1780],  // Cardiff Central
+            [51.6208, -3.9462]   // Swansea
+        ]
+    },
+    {
+        name: "Midland Main Line (MML)",
+        color: "orange",
+        coordinates: [
+            [51.5296, -0.1269],  // London St Pancras
+            [51.8796, -0.4172],  // Luton
+            [52.1364, -0.4686],  // Bedford
+            [52.3022, -0.7031],  // Wellingborough
+            [52.3975, -0.7259],  // Kettering
+            [52.6329, -1.1321],  // Leicester
+            [52.7674, -1.2046],  // Loughborough
+            [52.9548, -1.1581],  // Nottingham
+            [52.9230, -1.4751],  // Derby
+            [53.3811, -1.4700]   // Sheffield
+        ]
+    },
+    {
+        name: "CrossCountry Route (XC)",
+        color: "purple",
+        coordinates: [
+            [50.1182, -5.5371],  // Penzance
+            [50.7263, -3.5375],  // Exeter St Davids
+            [51.4505, -2.5833],  // Bristol Temple Meads
+            [52.4780, -1.8989],  // Birmingham New Street
+            [52.9225, -1.4746],  // Derby
+            [53.3811, -1.4700],  // Sheffield
+            [53.7965, -1.5479],  // Leeds
+            [53.9576, -1.0827],  // York
+            [54.9783, -1.6174],  // Newcastle
+            [55.9533, -3.1883],  // Edinburgh
+            [55.8580, -4.2590]   // Glasgow
+        ]
+    },
+    {
+        name: "TransPennine Route (TPX)",
+        color: "darkblue",
+        coordinates: [
+            [53.4084, -2.9916],  // Liverpool Lime Street
+            [53.3925, -2.5962],  // Warrington Central
+            [53.4769, -2.2314],  // Manchester Piccadilly
+            [53.6490, -1.7842],  // Huddersfield
+            [53.7944, -1.5476],  // Leeds
+            [53.9576, -1.0827],  // York
+            [54.9783, -1.6174]   // Newcastle
+        ]
+    },
+    {
+        name: "Brighton Main Line (BML)",
+        color: "darkgreen",
+        coordinates: [
+            [51.4952, -0.1447],  // London Victoria
+            [51.4647, -0.1705],  // Clapham Junction
+            [51.3758, -0.0931],  // East Croydon
+            [51.1569, -0.1616],  // Gatwick Airport
+            [50.9964, -0.1036],  // Haywards Heath
+            [50.8284, -0.1395]   // Brighton
+        ]
+    },
+    {
+        name: "West of England Main Line",
+        color: "cyan",
+        coordinates: [
+            [51.5034, -0.1136],  // London Waterloo
+            [51.3195, -0.5584],  // Woking
+            [51.2657, -1.0876],  // Basingstoke
+            [51.2101, -1.4816],  // Andover
+            [51.0700, -1.7937],  // Salisbury
+            [50.7293, -3.5339],  // Exeter St Davids
+            [50.3772, -4.1427]   // Plymouth
+        ]
+    },
+    {
+        name: "Chiltern Main Line",
+        color: "pink",
+        coordinates: [
+            [51.5222, -0.1635],  // London Marylebone
+            [51.6300, -0.7482],  // High Wycombe
+            [52.0604, -1.3409],  // Banbury
+            [52.2855, -1.5334],  // Leamington Spa
+            [52.2819, -1.5873],  // Warwick
+            [52.4797, -1.8989],  // Birmingham Moor Street
+            [52.4814, -1.8955]   // Birmingham Snow Hill
+        ]
+    },
+    {
+        name: "Anglia Main Line (Great Eastern Main Line)",
+        color: "yellow",
+        coordinates: [
+            [51.5175, -0.0812],  // London Liverpool Street
+            [51.5378, -0.0036],  // Stratford
+            [51.7360, 0.4766],   // Chelmsford
+            [51.8915, 0.9037],   // Colchester
+            [52.0588, 1.1482],   // Ipswich
+            [52.6309, 1.2974]    // Norwich
+        ]
+    }
+];
+
+
 start();
 
 
@@ -31,19 +185,9 @@ const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}
     maxZoom: 19,
     attribution: '© Google'
 });
-
-// Terrain tile layer (from Stamen)
-const terrainLayer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
-});
 const hybridLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
     maxZoom: 19,
     attribution: '© Google'
-});
-const esriTopographicLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{x}/{y}', {
-    attribution: 'Tiles © Esri &mdash; Source: Esri, USGS, NOAA',
-    maxZoom: 18
 });
 const googleTerrainLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
     maxZoom: 18,
@@ -56,22 +200,84 @@ const baseLayers = {
     "Satellite": satelliteLayer,
     "Terrain": googleTerrainLayer,
     "Hybrid":hybridLayer,
-
 };
 
 L.control.layers(baseLayers).addTo(map); // Add layer control to the map
+
+// Object to hold the polyline objects by route name
+const polylines = {};
+
+// Create polylines from route data and store them in the 'polylines' object
+routesData.forEach(route => {
+    const polyline = L.polyline(route.coordinates, { color: route.color });
+    polylines[route.name] = polyline;
+    polyline.addTo(map); // Add to the map initially
+});
+console.log(routesData)
+// Create a custom control to toggle routes
+const customControl = L.Control.extend({
+    onAdd: function(map) {
+        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        container.style.backgroundColor = 'white';
+        container.style.padding = '10px';
+
+        // Add checkboxes for each route dynamically from the array
+        container.innerHTML = `<h4>Routes</h4>`;
+        routesData.forEach((route, index) => {
+            const routeId = `route${index+1}Checkbox`;
+            // container.innerHTML += `
+            //     <label>
+            //         <input type="checkbox" id="${routeId}" checked> ${route.name}
+            //     </label><br>
+            // `;
+
+            // Attach event listener for each checkbox to toggle the route
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = routeId;
+            checkbox.checked = true;
+            checkbox.addEventListener('change', function() {
+                toggleRoute(route.name, this.checked);
+            });
+            const label = document.createElement('li');
+            
+            label.innerHTML = ` <label>
+                         ${route.name}
+                    </label>`
+                    label.appendChild(checkbox)   
+            container.appendChild(label)
+
+            // Append the checkbox to the container
+            // container.querySelector(`#${routeId}`).addEventListener('change', function() {
+            //     toggleRoute(route.name, this.checked);
+            // });
+        });
+
+        return container;
+    }
+});
+
+// Add the custom control to the map
+map.addControl(new customControl({ position: 'topright' }));
+
+// Function to toggle the visibility of a route (polyline)
+function toggleRoute(routeName, isVisible) {
+    console.log(routeName)
+    if (isVisible) {
+        polylines[routeName].addTo(map);
+    } else {
+        map.removeLayer(polylines[routeName]);
+    }
+}
+
+
+
 
 async function start() {
   // Call the function to plot all assets
   await createAssetList();
   await plotAssetsOnMap(assetListUpdated);
 }
-
-// Add OpenStreetMap tiles
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19,
-  attribution: "© OpenStreetMap",
-}).addTo(map);
 
 // Add reset button functionality to zoom back to the initial view
 document.getElementById("resetButton").addEventListener("click", function () {
@@ -98,9 +304,9 @@ async function plotAssetsOnMap(array) {
         marker.bindPopup(`
                     <strong>${asset["Site Name"]}</strong><br>
                     ${asset["Postcode"]}<br>
-                                <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${convertedData.lat},${convertedData.lng}" target="_blank">
-                Open Street View
-            </a>
+                    <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${convertedData.lat},${convertedData.lng}" target="_blank">
+                        Open Street View
+                    </a>
                 `);
 
         // Populate the sidebar item with the asset details
@@ -112,11 +318,6 @@ async function plotAssetsOnMap(array) {
         assetItem.addEventListener("mouseout", function () {
           marker.closePopup(); // Close popup when not hovering
         });
-
-        // Add click event to open Google Street View in a new tab
-        // marker.on('click', function() {
-        //     window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${convertedData.lat},${convertedData.lng}`, '_blank');
-        // });
 
         // Click functionality to pan and zoom the map to the marker
         assetItem.addEventListener("click", function () {

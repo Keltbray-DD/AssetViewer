@@ -3,6 +3,7 @@ html {
   height: 100%;
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  list-style: none;
 }
 
 #map {
@@ -20,12 +21,14 @@ html {
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically if needed */
   gap: 10px; /* Add space between the buttons */
-  padding: 20px;
+  padding: 10px;
   position: fixed;
   top: 10px;
   left: 50%;
   transform: translateX(-50%); /* Center horizontally on the page */
   z-index: 10000; /* Ensure buttons are on top of other content */
+  background-color: #fafafa96;
+  border-radius: 10px;
 }
 
 /* Styling for the buttons */
@@ -38,7 +41,9 @@ button {
   cursor: pointer;
   font-size: 16px;
 }
-
+h4{
+    margin: 0;
+}
 button:hover {
   background-color: #0056b3;
 }
@@ -211,3 +216,11 @@ button:hover {
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+
+  .leaflet-control-custom {
+    background: white;
+    padding: 10px;
+    font-size: 14px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
