@@ -362,11 +362,12 @@ async function plotAssetsOnMap(array) {
         // Populate the sidebar item with the asset details
         assetItem.innerHTML = `
                     <strong>${asset["Site Name"]}</strong><br>
-                    ${asset["Postcode"]}
+                    <p>${convertedData.lat}, ${convertedData.lng}<br>
+                    ${asset["Postcode"]}</p>
                 `;
 
         assetItem.addEventListener("mouseout", function () {
-          marker.closePopup(); // Close popup when not hovering
+          //marker.closePopup(); // Close popup when not hovering
           //document.getElementById("detailsPanel").style.right = "-60vw"; // Hide the panel off-screen
         });
 
@@ -449,45 +450,36 @@ document.addEventListener('DOMContentLoaded',async function(){
 // Function to adjust the position of the layer control
 function adjustLayerControlPosition(panelWidth) {
     const controlContainerLayers = document.querySelector('.leaflet-control-layers'); // Get the control container
-    if (controlContainerLayers) {
+    if (controlContainerLayers && panelWidth > 200 && panelWidth < window.innerWidth * 0.5) {
         controlContainerLayers.style.right = panelWidth ? `${panelWidth +30}px` : '0px'; // Adjust based on panel width
     }
     const controlContainerRoutes = document.querySelector('.routesControl'); // Get the control container
-    if (controlContainerRoutes) {
+    if (controlContainerRoutes && panelWidth > 200 && panelWidth < window.innerWidth * 0.5) {
         controlContainerRoutes.style.right = panelWidth ? `${panelWidth +30}px` : '0px'; // Adjust based on panel width
+    }
+    if(panelWidth == 0){
+        controlContainerRoutes.style.right = panelWidth ? `${panelWidth +30}px` : '0px'; // Adjust based on panel width
+        controlContainerLayers.style.right = panelWidth ? `${panelWidth +30}px` : '0px'; // Adjust based on panel width
     }
 }
 // Show the details panel with asset information
 function showDetailsPanel(asset) {
-  // Populate the details panel with information from the selected asset
-  const detailsContent = document.getElementById("detailsContent");
-  detailsContent.innerHTML = `
-    <strong>Site Name:</strong> ${asset["Site Name"]}<br>
-    <strong>Postcode:</strong> ${asset["Postcode"]}<br>
-    <strong>Category ID:</strong> ${asset["categoryId"]}<br>
-    <strong>Asset ID:</strong> ${asset["assetId"]}<br>
-    <strong>Frequency:</strong> ${asset["Frequency"]}<br>
-    <strong>Region:</strong> ${asset["Region"]}<br>
-    <strong>Route:</strong> ${asset["Route"]}<br>
-    <strong>ELR:</strong> ${asset["ELR"]}<br>
-    <strong>Mileage:</strong> ${asset["Mileage"]}<br>
-    <strong>Operator:</strong> ${asset["Operator"]}<br>
-    <strong>Area:</strong> ${asset["Area"]}<br>
-    <strong>Banding:</strong> ${asset["Banding"]}<br>
-    <strong>Percentage Complete:</strong> ${asset["Percentage Complete"]}<br>
-    <strong>NR Status:</strong> ${asset["NR Status"]}<br>
-    <strong>Examiner:</strong> ${asset["Examiner"]}<br>
-    <strong>Line Block:</strong> ${asset["Line Block"]}<br>
-    <strong>Site Tolerance Date (earliest):</strong> ${asset["Site Tolerance Date (earliest)"]}<br>
-    <strong>Required Exam Site Date:</strong> ${asset["Required Exam Site Date"]}<br>
-    <strong>Requested Site Tolerance Date (latest):</strong> ${asset["Requested Site Tolerance Date (latest)"]}<br>
-    <strong>Baseline Date:</strong> ${asset["Baseline Date"]}<br>
-    <strong>Works Started on-site Date:</strong> ${asset["Works Started on-site Date"]}<br>
-    <strong>Completion on-site Date:</strong> ${asset["Completion on-site Date"]}<br>
-    <strong>Date exam becomes over 28 Days:</strong> ${asset["Date exam becomes over 28 Days"]}<br>
-    <strong>Date Ready for STE2 Checks:</strong> ${asset["Date Ready for STE2 Checks"]}<br>
-    <strong>Planned Submission Date:</strong> ${asset["Planned Submission Date"]}<br>
-`;
+    // Get the element where the details will be displayed
+    const detailsContent = document.getElementById("detailsContent");
+
+    // Start building the HTML content
+    let content = '';
+
+    // Loop through each key in the asset object
+    for (let key in asset) {
+        if (asset.hasOwnProperty(key)) {
+            // Add each key-value pair as a row in the details panel
+            content += `<strong>${key.replace(/_/g, ' ')}:</strong> ${asset[key] ? asset[key] : 'Not available'}<br>`;
+        }
+    }
+
+    // Populate the details content with the dynamically generated HTML
+    detailsContent.innerHTML = content;
 const panelWidthPx = vwToPx(20); // Convert panel width from vw to pixels
     adjustLayerControlPosition(panelWidthPx);
   // Slide the details panel in from the right
@@ -738,8 +730,15 @@ closeModal.addEventListener("click", () => {
   toggleButton.textContent = "Show Asset List";
 });
 
-// Function to hide the loading screen
+// Function to hide the loading screen with a fade effect
 function hideLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
-    loadingScreen.style.display = 'none';  // Hide the loading screen
+    
+    // Set the opacity to 0 (fade out)
+    loadingScreen.style.opacity = '0';
+    
+    // Wait for the transition to complete (1 second in this case) before setting display to 'none'
+    setTimeout(() => {
+        loadingScreen.style.display = 'none';
+    }, 1000);  // Match the duration of the CSS transition (1 second)
 }

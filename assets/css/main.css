@@ -5,6 +5,9 @@ html {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   list-style: none;
 }
+p{
+  margin: 0;
+}
 
 #map {
   height: 100vh; /* Fullscreen height */
@@ -50,6 +53,7 @@ button:hover {
 
 #resetButton {
   background-color: #28a745;
+
 }
 
 #resetButton:hover {
@@ -235,6 +239,8 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 1;  /* Fully visible initially */
+    transition: opacity 1s ease;  /* Transition the opacity for 1 second */
 }
 
 /* Center the loading screen content */
