@@ -202,7 +202,7 @@ const baseLayers = {
     "Hybrid":hybridLayer,
 };
 
-L.control.layers(baseLayers).addTo(map); // Add layer control to the map
+L.control.layers(baseLayers, null, { position: 'bottomright' }).addTo(map); // Add layer control to the map
 
 // Object to hold the polyline objects by route name
 const polylines = {};
@@ -217,12 +217,22 @@ console.log(routesData)
 // Create a custom control to toggle routes
 const customControl = L.Control.extend({
     onAdd: function(map) {
-        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom routesControl');
         container.style.backgroundColor = 'white';
         container.style.padding = '10px';
+        container.id = 'routeBox'
 
         // Add checkboxes for each route dynamically from the array
-        container.innerHTML = `<h4>Routes</h4>`;
+        container.innerHTML = `
+            <h4 style="display: flex; align-items: center; justify-content: space-between;">
+                Routes
+                <button id="toggleButton" style="font-size: 20px; padding:0 10px;color:black; border: none; background: none; cursor: pointer;">+</button>
+            </h4>
+            <div id="routeList" style="overflow: hidden; transition: height 0.3s ease; display:none;">
+            </div>
+        `;
+        // Add checkboxes for each route inside the collapsible list
+        const routeList = container.querySelector('#routeList');
         routesData.forEach((route, index) => {
             const routeId = `route${index+1}Checkbox`;
             // container.innerHTML += `
@@ -242,23 +252,59 @@ const customControl = L.Control.extend({
             const label = document.createElement('li');
             
             label.innerHTML = ` <label>
+            <span style="width: 20px; height: 2px; background-color: ${route.color}; margin-right: 8px; display: inline-block;"></span>
                          ${route.name}
                     </label>`
                     label.appendChild(checkbox)   
-            container.appendChild(label)
+                    routeList.appendChild(label)
 
             // Append the checkbox to the container
             // container.querySelector(`#${routeId}`).addEventListener('change', function() {
             //     toggleRoute(route.name, this.checked);
             // });
         });
-
+        // Toggle the route list's visibility
+        const toggleButton = container.querySelector('#toggleButton');
+        toggleButton.addEventListener('click', function() {
+            const routeList = container.querySelector('#routeList');
+            if (routeList.style.display === 'none') {
+                routeList.style.display = 'block';
+                toggleButton.textContent = '-'; // Change the button to "-" when expanded
+            } else {
+                routeList.style.display = 'none';
+                toggleButton.textContent = '+'; // Change the button to "+" when collapsed
+            }
+        });
         return container;
     }
 });
 
 // Add the custom control to the map
-map.addControl(new customControl({ position: 'topright' }));
+map.addControl(new customControl({ position: 'bottomright' }));
+
+// Define the custom control for the logo and text
+const logoControl = L.Control.extend({
+    onAdd: function(map) {
+        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom logoBox');
+        container.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';  // Light background
+        container.style.padding = '10px';  // Padding for the logo and text
+        container.style.borderRadius = '5px';  // Optional rounded corners
+        container.style.boxShadow = '0px 0px 10px rgba(0,0,0,0.2)';  // Optional: Add a shadow
+
+        // Add your logo and text (replace 'logo_url.png' with your actual logo URL)
+        container.innerHTML = `
+            <div style="display: flex; align-items: center;">
+                <img src="./assets/media/Keltbray-logo_single.png" alt="Company Logo" style="height: 30px; margin-right: 10px;"> <!-- Your logo -->
+                <span style="font-size: 16px; font-weight: bold;">KISL GIS</span> <!-- Your text -->
+            </div>
+        `;
+
+        return container;
+    }
+});
+
+// Add the custom logo control to the bottom-left corner of the map
+map.addControl(new logoControl({ position: 'bottomleft' }));
 
 // Function to toggle the visibility of a route (polyline)
 function toggleRoute(routeName, isVisible) {
@@ -277,6 +323,7 @@ async function start() {
   // Call the function to plot all assets
   await createAssetList();
   await plotAssetsOnMap(assetListUpdated);
+  await hideLoadingScreen()
 }
 
 // Add reset button functionality to zoom back to the initial view
@@ -308,7 +355,10 @@ async function plotAssetsOnMap(array) {
                         Open Street View
                     </a>
                 `);
-
+        // Add a click event listener to the marker
+        marker.on('click', function(e) {
+            showDetailsPanel(asset); 
+        });
         // Populate the sidebar item with the asset details
         assetItem.innerHTML = `
                     <strong>${asset["Site Name"]}</strong><br>
@@ -317,6 +367,7 @@ async function plotAssetsOnMap(array) {
 
         assetItem.addEventListener("mouseout", function () {
           marker.closePopup(); // Close popup when not hovering
+          //document.getElementById("detailsPanel").style.right = "-60vw"; // Hide the panel off-screen
         });
 
         // Click functionality to pan and zoom the map to the marker
@@ -397,9 +448,13 @@ document.addEventListener('DOMContentLoaded',async function(){
 })
 // Function to adjust the position of the layer control
 function adjustLayerControlPosition(panelWidth) {
-    const controlContainer = document.querySelector('.leaflet-control-layers'); // Get the control container
-    if (controlContainer) {
-        controlContainer.style.right = panelWidth ? `${panelWidth +30}px` : '10px'; // Adjust based on panel width
+    const controlContainerLayers = document.querySelector('.leaflet-control-layers'); // Get the control container
+    if (controlContainerLayers) {
+        controlContainerLayers.style.right = panelWidth ? `${panelWidth +30}px` : '0px'; // Adjust based on panel width
+    }
+    const controlContainerRoutes = document.querySelector('.routesControl'); // Get the control container
+    if (controlContainerRoutes) {
+        controlContainerRoutes.style.right = panelWidth ? `${panelWidth +30}px` : '0px'; // Adjust based on panel width
     }
 }
 // Show the details panel with asset information
@@ -433,7 +488,7 @@ function showDetailsPanel(asset) {
     <strong>Date Ready for STE2 Checks:</strong> ${asset["Date Ready for STE2 Checks"]}<br>
     <strong>Planned Submission Date:</strong> ${asset["Planned Submission Date"]}<br>
 `;
-const panelWidthPx = vwToPx(30); // Convert panel width from vw to pixels
+const panelWidthPx = vwToPx(20); // Convert panel width from vw to pixels
     adjustLayerControlPosition(panelWidthPx);
   // Slide the details panel in from the right
   document.getElementById("detailsPanel").style.right = "0";
@@ -683,4 +738,8 @@ closeModal.addEventListener("click", () => {
   toggleButton.textContent = "Show Asset List";
 });
 
-
+// Function to hide the loading screen
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    loadingScreen.style.display = 'none';  // Hide the loading screen
+}
