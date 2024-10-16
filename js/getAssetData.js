@@ -41,13 +41,22 @@ const hybridLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z=
     maxZoom: 19,
     attribution: '© Google'
 });
+const esriTopographicLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{x}/{y}', {
+    attribution: 'Tiles © Esri &mdash; Source: Esri, USGS, NOAA',
+    maxZoom: 18
+});
+const googleTerrainLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+    maxZoom: 18,
+    attribution: '© Google'
+});
 
 // Add a control to switch between layers
 const baseLayers = {
     "Street Map": osmLayer,
     "Satellite": satelliteLayer,
-    "Terrain": terrainLayer,
-    "Hybrid":hybridLayer
+    "Terrain": googleTerrainLayer,
+    "Hybrid":hybridLayer,
+
 };
 
 L.control.layers(baseLayers).addTo(map); // Add layer control to the map
@@ -88,7 +97,10 @@ async function plotAssetsOnMap(array) {
         // Bind popup with asset information
         marker.bindPopup(`
                     <strong>${asset["Site Name"]}</strong><br>
-                    ${asset["Postcode"]}
+                    ${asset["Postcode"]}<br>
+                                <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${convertedData.lat},${convertedData.lng}" target="_blank">
+                Open Street View
+            </a>
                 `);
 
         // Populate the sidebar item with the asset details
@@ -100,6 +112,11 @@ async function plotAssetsOnMap(array) {
         assetItem.addEventListener("mouseout", function () {
           marker.closePopup(); // Close popup when not hovering
         });
+
+        // Add click event to open Google Street View in a new tab
+        // marker.on('click', function() {
+        //     window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${convertedData.lat},${convertedData.lng}`, '_blank');
+        // });
 
         // Click functionality to pan and zoom the map to the marker
         assetItem.addEventListener("click", function () {
