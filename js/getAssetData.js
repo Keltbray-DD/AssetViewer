@@ -22,6 +22,7 @@ const routesData = [
             [54.5231, -1.5552],  // Darlington
             [54.7763, -1.5768],  // Durham
             [54.9783, -1.6174],  // Newcastle
+            [55.392839, -1.636542], // Almounth
             [55.7710, -2.0067],  // Berwick-upon-Tweed
             [55.9533, -3.1883]   // Edinburgh
         ]
@@ -212,6 +213,18 @@ routesData.forEach(route => {
     const polyline = L.polyline(route.coordinates, { color: route.color });
     polylines[route.name] = polyline;
     polyline.addTo(map); // Add to the map initially
+    // Add a hover effect using the 'mouseover' event to show the polyline name
+    polyline.on('mouseover', function(e) {
+        const popup = L.popup()
+            .setLatLng(e.latlng)  // Set the popup at the mouse hover location
+            .setContent(`<strong>${route.name}</strong>`)  // Show the name of the polyline
+            .openOn(map);
+    });
+
+    // Close the popup when the mouse leaves the polyline
+    polyline.on('mouseout', function() {
+        map.closePopup();  // Close the popup when hover ends
+    });
 });
 console.log(routesData)
 // Create a custom control to toggle routes
@@ -282,6 +295,57 @@ const customControl = L.Control.extend({
 // Add the custom control to the map
 map.addControl(new customControl({ position: 'bottomright' }));
 
+    // Object to store the KML layers
+    const kmlLayers = {};
+
+    // Fetch the list of KML files from the server
+    async function getKMLFiles() {
+        const response = await fetch('/get-kml-files');
+        const kmlFiles = await response.json();
+        loadKMLLayers(kmlFiles);
+    }
+
+    // Load KML layers and create a list of checkboxes for toggling
+    function loadKMLLayers(kmlFiles) {
+        const layerControl = document.getElementById('layerControl');
+        layerControl.innerHTML = '<h4>Available KML Layers</h4>';
+
+        kmlFiles.forEach((file, index) => {
+            const layerId = `layer${index}`;
+
+            // Create a checkbox for each KML file
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = layerId;
+            checkbox.checked = true;  // Load the layers by default
+            checkbox.addEventListener('change', () => toggleKMLLayer(file, checkbox.checked));
+
+            const label = document.createElement('label');
+            label.htmlFor = layerId;
+            label.textContent = file;
+
+            layerControl.appendChild(checkbox);
+            layerControl.appendChild(label);
+            layerControl.appendChild(document.createElement('br'));
+
+            // Load the KML layer onto the map
+            const kmlLayer = omnivore.kml(`/kml-files/${file}`).addTo(map);
+            kmlLayers[file] = kmlLayer;  // Store the layer reference
+        });
+    }
+
+    // Function to toggle KML layer visibility
+    function toggleKMLLayer(file, isVisible) {
+        if (isVisible) {
+            kmlLayers[file].addTo(map);  // Add layer to the map
+        } else {
+            map.removeLayer(kmlLayers[file]);  // Remove layer from the map
+        }
+    }
+
+    // Fetch the KML files when the page loads
+    
+
 // Define the custom control for the logo and text
 const logoControl = L.Control.extend({
     onAdd: function(map) {
@@ -323,6 +387,7 @@ async function start() {
   // Call the function to plot all assets
   await createAssetList();
   await plotAssetsOnMap(assetListUpdated);
+  //await getKMLFiles();
   await hideLoadingScreen()
 }
 
@@ -351,6 +416,7 @@ async function plotAssetsOnMap(array) {
         marker.bindPopup(`
                     <strong>${asset["Site Name"]}</strong><br>
                     ${asset["Postcode"]}<br>
+                    ${convertedData.lat}, ${convertedData.lng}<br>
                     <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${convertedData.lat},${convertedData.lng}" target="_blank">
                         Open Street View
                     </a>
@@ -404,6 +470,7 @@ function greyOutAssetItem(assetItem, asset) {
   assetItem.style.color = "#888"; // Greyed out text color
   assetItem.style.backgroundColor = "#f0f0f0"; // Light grey background
   assetItem.style.cursor = "not-allowed"; // Change cursor to indicate non-clickable
+  assetItem.style.boxShadow = "none"
 }
 document.addEventListener('DOMContentLoaded',async function(){
     let detailsPanel = document.getElementById('detailsPanel');

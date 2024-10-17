@@ -271,3 +271,12 @@ button:hover {
 #routeBox{
   transition: all 0.3s ease; /* Smooth transition */
 }
+
+.polyline-tooltip {
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid black;
+}
